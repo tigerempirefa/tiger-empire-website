@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Player registration application for Tiger Empire Football Academy in Enugu State, Nigeria.">
+<meta name="theme-color" content="#090909">
+<title>Player Registration | Tiger Empire Football Academy</title>
+<style>
+:root{--bg:#090909;--panel:#141414;--orange:#f47b20;--white:#f7f7f7;--muted:#b8b8b8;--line:#292929}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--white);font-family:Arial,Helvetica,sans-serif;line-height:1.6}a{color:inherit;text-decoration:none}.wrap{width:min(900px,92%);margin:auto}header{background:rgba(9,9,9,.96);border-bottom:1px solid var(--line)}.nav{min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;letter-spacing:.5px}.brand span{color:var(--orange)}.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--orange);color:#111;font-weight:800;padding:11px 17px;border-radius:5px;border:0;cursor:pointer}.btn.outline{background:transparent;color:var(--white);border:1px solid #666}.hero{padding:42px 0 20px}.eyebrow{color:var(--orange);font-weight:800;letter-spacing:2px;text-transform:uppercase;font-size:12px}.hero h1{font-size:clamp(32px,5vw,48px);line-height:1.1;margin:10px 0}.hero p{color:#d0d0d0}.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:clamp(18px,4vw,32px);margin:20px 0 50px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}form{display:grid;gap:15px}label{font-size:13px;color:#ddd;display:grid;gap:6px}input,select,textarea{width:100%;background:#101010;border:1px solid #454545;border-radius:5px;color:white;padding:12px;font:inherit}input:focus,select:focus,textarea:focus{outline:2px solid var(--orange);outline-offset:2px}textarea{min-height:90px;resize:vertical}.check{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#ddd}.check input{width:auto;margin-top:5px;flex:0 0 auto}.muted{color:var(--muted);font-size:13px}.form-title{color:var(--orange);margin:24px 0 8px;font-size:18px}footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:13px}@media(max-width:620px){.grid{grid-template-columns:1fr}.nav{min-height:64px}.brand{font-size:13px}.btn{padding:10px 12px}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="brand" href="index.html">TIGER EMPIRE <span>FOOTBALL ACADEMY</span></a><a class="btn outline" href="index.html">Back to Home</a></div></header>
+<main class="wrap">
+<section class="hero"><div class="eyebrow">Talent • Discipline • Teamwork</div><h1>Player Registration</h1><p>Complete this application to express interest in joining Tiger Empire Football Academy, Enugu State, Nigeria. Submitting this form is an application, not confirmation of admission or a trial date.</p></section>
+<section class="card">
+<form name="player-registration" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you-registration.html">
+<input type="hidden" name="form-name" value="player-registration">
+<p hidden><label>Leave this field empty: <input name="bot-field"></label></p>
+<h2 class="form-title" style="margin-top:0">Player details</h2>
+<div class="grid">
+<label>Player's full name *<input name="player-name" autocomplete="name" required maxlength="100" placeholder="Full name"></label>
+<label>Date of birth *<input type="date" name="date-of-birth" required></label>
+<label>Preferred playing position *<select name="preferred-position" required><option value="">Choose position</option><option>Goalkeeper</option><option>Defender</option><option>Midfielder</option><option>Forward / Striker</option><option>Not sure yet</option></select></label>
+<label>Current football experience *<select name="football-experience" required><option value="">Choose one</option><option>Beginner</option><option>School or community team</option><option>Football academy</option><option>Club experience</option></select></label>
+<label>Current school or team (optional)<input name="school-or-team" maxlength="120" placeholder="School or team name"></label>
+<label>Player's town / area<input name="player-area" maxlength="120" placeholder="Town or area"></label>
+</div>
+<h2 class="form-title">Parent or guardian details</h2>
+<div class="grid">
+<label>Parent / guardian full name *<input name="guardian-name" required autocomplete="name" maxlength="100" placeholder="Full name"></label>
+<label>Relationship to player *<select name="guardian-relationship" required><option value="">Choose one</option><option>Mother</option><option>Father</option><option>Legal guardian</option><option>Other authorised adult</option></select></label>
+<label>Contact phone / WhatsApp *<input type="tel" name="guardian-phone" required autocomplete="tel" maxlength="30" placeholder="Include country code if possible"></label>
+<label>Email address (optional)<input type="email" name="guardian-email" autocomplete="email" maxlength="150" placeholder="name@example.com"></label>
+<label>Emergency contact name (optional)<input name="emergency-contact-name" maxlength="100" placeholder="Name"></label>
+<label>Emergency contact phone (optional)<input type="tel" name="emergency-contact-phone" maxlength="30" placeholder="Phone number"></label>
+</div>
+<label>Anything the academy should know? (optional)<textarea name="additional-information" maxlength="1000" placeholder="Share only information relevant to the registration or trial request."></textarea></label>
+<label class="check"><input type="checkbox" name="consent-to-contact" value="yes" required><span>I agree that Tiger Empire Football Academy may contact me about this application using the contact details provided. *</span></label>
+<label class="check"><input type="checkbox" name="authority-confirmation" value="yes" required><span>I confirm that I am the player if 18 or older, or the player's parent/legal guardian or an adult authorised to submit this application. *</span></label>
+<p class="muted">Please do not include identity document numbers, bank details, passwords, or unnecessary sensitive information. Contact the academy if you need to correct or withdraw an application.</p>
+<button class="btn" type="submit">Submit Player Application</button>
+<p class="muted">Academy contact: +234 812 263 1746 · +971 55 721 7923 · tigerempirefa@gmail.com</p>
+</form>
+</section>
+</main>
+<footer><div class="wrap">© Tiger Empire Football Academy · Enugu State, Nigeria · Talent • Discipline • Teamwork</div></footer>
+</body></html>

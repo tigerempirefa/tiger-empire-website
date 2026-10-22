@@ -1,0 +1,19 @@
+TIGER EMPIRE FOOTBALL ACADEMY — PLAYER REGISTRATION UPDATE
+
+FILES INCLUDED
+- index.html: updated homepage with Register a Player links
+- registration.html: player registration form
+- thank-you-registration.html: confirmation page after submission
+- thank-you.html: existing general enquiry confirmation page
+
+DEPLOY
+1. Upload/deploy the complete contents of this folder to the existing Netlify site. Keep all files together in the published site root.
+2. In the Netlify site dashboard, open Forms and enable form detection if it is not already enabled.
+3. Trigger a fresh deploy after enabling form detection so Netlify can detect the player-registration form.
+4. After publishing, open /registration.html and submit a clearly labelled test application using your own test details.
+5. In Netlify Forms, check that the submission appears under the player-registration form before sharing the registration link publicly.
+
+IMPORTANT
+- This is a basic online application form, not a full player database or club-management system.
+- The form collects personal information, including information about children. Limit dashboard access, only use information for registration/contact, and follow applicable privacy and child-protection rules.
+- Submitting an application does not confirm acceptance or a trial date.
