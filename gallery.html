@@ -212,24 +212,6 @@ document.querySelectorAll("[data-filter]").forEach(button => {
   }
 })();
   </script>
-
-    document.querySelectorAll("[data-filter]").forEach(function(button) {
-      button.addEventListener("click", function() {
-        var filter = button.dataset.filter;
-        document.querySelectorAll("[data-filter]").forEach(function(b) {
-          b.classList.toggle("active", b === button);
-        });
-        var visible = 0;
-        document.querySelectorAll("#gallery .item").forEach(function(item) {
-          var show = filter === "all" || item.dataset.type === filter;
-          item.hidden = !show;
-          if (show) visible++;
-        });
-        document.getElementById("empty").hidden = visible > 0;
-      });
-    });
-  </script>
-
 <section id="cloudinary-admin" style="margin:24px auto;padding:20px;max-width:800px;background:#171717;color:white;border:1px solid #39ff14;border-radius:12px;font-family:Arial,sans-serif">
   <h2 style="color:#39ff14">Tiger Empire Media Upload</h2>
   <p>Select team photos or videos to upload to Cloudinary.</p>
