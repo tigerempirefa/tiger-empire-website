@@ -1,5 +1,12 @@
 [
   {
+    "type": "news",
+    "title": "Tiger Empire Academy News",
+    "url": "",
+    "content": "Tiger Empire Football Academy continues to develop talented players through discipline, teamwork, and dedication. Fear the Roar!",
+    "created_at": "2026-10-24T19:06:13.216Z"
+  },
+  {
     "type": "photo",
     "title": "Test photo",
     "url": "https://res.cloudinary.com/atizh0zv/image/upload/ssizrddwwpcvxbe5yqme.jpg",
