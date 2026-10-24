@@ -115,8 +115,99 @@
   </footer>
 
   <script>
-    document.getElementById("year").textContent =
-      new Date().getFullYear();
+document.getElementById("year").textContent = new Date().getFullYear();
+
+const gallery = document.getElementById("gallery");
+const empty = document.getElementById("empty");
+let currentFilter = "all";
+let mediaItems = [];
+
+function renderGallery() {
+  gallery.innerHTML = "";
+
+  const filtered = mediaItems.filter(item =>
+    currentFilter === "all" || item.type === currentFilter
+  );
+
+  filtered.forEach(item => {
+    const card = document.createElement("article");
+    card.className = "item";
+    card.dataset.type = item.type;
+
+    if (item.type === "video") {
+      const video = document.createElement("video");
+      video.src = item.url;
+      video.controls = true;
+      video.preload = "metadata";
+      video.playsInline = true;
+      card.appendChild(video);
+    } else {
+      const img = document.createElement("img");
+      img.src = item.url;
+      img.alt = item.title || "Tiger Empire Football Academy";
+      img.loading = "lazy";
+      card.appendChild(img);
+    }
+
+    const heading = document.createElement("h3");
+    heading.textContent = (item.title || "Tiger Empire Media")
+      .replace(/[-_]/g, " ");
+
+    card.appendChild(heading);
+    gallery.appendChild(card);
+  });
+
+  empty.hidden = filtered.length > 0;
+  if (filtered.length === 0) {
+    empty.textContent = currentFilter === "news"
+      ? "No team news items yet."
+      : "No media in this category yet.";
+  }
+}
+
+document.querySelectorAll("[data-filter]").forEach(button => {
+  button.addEventListener("click", () => {
+    currentFilter = button.dataset.filter;
+
+    document.querySelectorAll("[data-filter]").forEach(b => {
+      b.classList.toggle("active", b === button);
+    });
+
+    renderGallery();
+  });
+});
+
+(async function loadMedia() {
+  empty.hidden = false;
+  empty.textContent = "Loading Tiger Empire media...";
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/gallery-media",
+      { cache: "no-store" }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !Array.isArray(data.resources)) {
+      throw new Error("Could not load media.");
+    }
+
+    mediaItems = data.resources.filter(item =>
+      item.url &&
+      !item.url.includes("/samples/") &&
+      (item.type === "photo" || item.type === "video")
+    );
+
+    renderGallery();
+  } catch (error) {
+    gallery.innerHTML = "";
+    empty.hidden = false;
+    empty.textContent =
+      "Unable to load media right now. Please try again later.";
+  }
+})();
+</script>
 
     document.querySelectorAll("[data-filter]").forEach(function(button) {
       button.addEventListener("click", function() {
