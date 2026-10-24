@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Our Squad | Tiger Empire Football Academy</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #10130c;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      padding: 28px 16px;
+      text-align: center;
+      background: #1c2116;
+      border-bottom: 3px solid #b7ff00;
+    }
+    h1, h2 { color: #b7ff00; }
+    .intro { color: #ddd; }
+    main { max-width: 1100px; margin: auto; padding: 20px 16px; }
+    #players {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+    .player {
+      background: #1c2116;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #343b29;
+    }
+    .player img {
+      width: 100%;
+      height: 230px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #303628;
+    }
+    .player h3 { color: #b7ff00; margin-bottom: 8px; }
+    .details { line-height: 1.8; color: #eee; }
+    .number { font-size: 24px; font-weight: bold; color: #b7ff00; }
+    .back {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 18px;
+      background: #b7ff00;
+      color: #10130c;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    footer { text-align: center; padding: 24px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🐅 TIGER EMPIRE</h1>
+    <h2>OUR SQUAD</h2>
+    <p class="intro">Talent • Discipline • Teamwork</p>
+  </header>
+
+  <main>
+    <h2>Meet Our Players</h2>
+    <p>Our squad and player profiles will appear here.</p>
+    <div id="players">Loading squad...</div>
+    <a class="back" href="/">Back to Homepage</a>
+  </main>
+
+  <footer>Fear the Roar • Tiger Empire Football Academy</footer>
+
+  <script>
+    fetch("/data/players.json")
+      .then(response => {
+        if (!response.ok) throw new Error("Squad not available");
+        return response.json();
+      })
+      .then(players => {
+        const container = document.getElementById("players");
+        container.innerHTML = "";
+
+        if (!players.length) {
+          container.textContent = "Our squad profiles will be announced soon.";
+          return;
+        }
+
+        players.forEach(player => {
+          const card = document.createElement("article");
+          card.className = "player";
+
+          if (player.photo) {
+            const img = document.createElement("img");
+            img.src = player.photo;
+            img.alt = player.name || "Academy player";
+            card.appendChild(img);
+          }
+
+          const name = document.createElement("h3");
+          name.textContent = player.name || "Academy Player";
+          card.appendChild(name);
+
+          const number = document.createElement("p");
+          number.className = "number";
+          number.textContent = player.number ? "#" + player.number : "Tiger Empire Player";
+          card.appendChild(number);
+
+          const details = document.createElement("div");
+          details.className = "details";
+          details.textContent =
+            "Position: " + (player.position || "To be announced") +
+            "\nAge group: " + (player.age_group || "To be announced");
+          details.style.whiteSpace = "pre-line";
+          card.appendChild(details);
+
+          container.appendChild(card);
+        });
+      })
+      .catch(() => {
+        document.getElementById("players").textContent =
+          "Squad profiles are temporarily unavailable.";
+      });
+  </script>
+</body>
+</html>
