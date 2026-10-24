@@ -1,3 +1,4 @@
+
 exports.handler = async function () {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
   const apiKey = process.env.CLOUDINARY_API_KEY;
@@ -6,6 +7,7 @@ exports.handler = async function () {
   if (!cloudName || !apiKey || !apiSecret) {
     return {
       statusCode: 500,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         error: "Cloudinary settings are missing."
       })
@@ -35,11 +37,10 @@ exports.handler = async function () {
         });
 
         if (!response.ok) {
-  const details = await response.text();
-  throw new Error(
-    "Cloudinary HTTP " + response.status + ": " + details
-  );
-}
+          throw new Error(
+            "Cloudinary returned HTTP " + response.status
+          );
+        }
 
         const data = await response.json();
         return data.resources || [];
@@ -63,7 +64,8 @@ exports.handler = async function () {
       });
 
     resources.sort(function (a, b) {
-      return new Date(b.created_at) - new Date(a.created_at);
+      return new Date(b.created_at) -
+        new Date(a.created_at);
     });
 
     return {
@@ -77,27 +79,19 @@ exports.handler = async function () {
       })
     };
   } catch (error) {
-  console.error("Gallery media error:", error.message);
+    console.error("Gallery media error:", error.message);
 
-  return {
-    statusCode: 502,
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      error: "Unable to load Cloudinary media.",
-      details: error.message
-    })
-  };
-}
     return {
       statusCode: 502,
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store"
       },
       body: JSON.stringify({
-        error: "Unable to load Cloudinary media."
+        error: "Unable to load Cloudinary media.",
+        details: error.message
       })
     };
   }
 };
+    
