@@ -134,20 +134,26 @@ function renderGallery() {
     card.className = "item";
     card.dataset.type = item.type;
 
-    if (item.type === "video") {
-      const video = document.createElement("video");
-      video.src = item.url;
-      video.controls = true;
-      video.preload = "metadata";
-      video.playsInline = true;
-      card.appendChild(video);
-    } else {
-      const img = document.createElement("img");
-      img.src = item.url;
-      img.alt = item.title || "Tiger Empire Football Academy";
-      img.loading = "lazy";
-      card.appendChild(img);
-    }
+    
+if (item.type === "video") {
+  const video = document.createElement("video");
+  video.src = item.url;
+  video.controls = true;
+  video.preload = "metadata";
+  video.playsInline = true;
+  card.appendChild(video);
+} else if (item.type === "photo") {
+  const img = document.createElement("img");
+  img.src = item.url;
+  img.alt = item.title || "Tiger Empire Football Academy";
+  img.loading = "lazy";
+  card.appendChild(img);
+} else if (item.type === "news") {
+  const content = document.createElement("p");
+  content.textContent = item.content || "";
+  card.appendChild(content);
+  }
+    
 
     const heading = document.createElement("h3");
     heading.textContent = (item.title || "Tiger Empire Media")
@@ -205,9 +211,9 @@ document.querySelectorAll("[data-filter]").forEach(button => {
     (item.type === "news" && item.title)
   ))
   .filter(item =>
-    !item.url.toLowerCase().includes("/samples/") &&
-    !String(item.title || "").toLowerCase().includes("sample")
-  );
+  (!item.url || !item.url.toLowerCase().includes("/samples/")) &&
+  !String(item.title || "").toLowerCase().includes("sample")
+);
 
     renderGallery();
   } catch (error) {
