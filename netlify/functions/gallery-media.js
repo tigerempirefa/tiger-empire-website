@@ -3,22 +3,33 @@ exports.handler = async function () {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
   const apiKey = process.env.CLOUDINARY_API_KEY;
   const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  const token = process.env.GITHUB_TOKEN;
+  const repo = process.env.GITHUB_REPO;
 
-  if (!cloudName || !apiKey || !apiSecret) {
+  const headers = {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-store"
+  };
+
+  function reply(statusCode, data) {
     return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        error: "Cloudinary settings are missing."
-      })
+      statusCode,
+      headers,
+      body: JSON.stringify(data)
     };
   }
 
-  const auth = Buffer.from(
-    apiKey + ":" + apiSecret
-  ).toString("base64");
+  if (!cloudName || !apiKey || !apiSecret) {
+    return reply(500, {
+      error: "Cloudinary settings are missing."
+    });
+  }
 
   try {
+    const auth = Buffer.from(
+      apiKey + ":" + apiSecret
+    ).toString("base64");
+
     const types = ["image", "video"];
 
     const results = await Promise.all(
@@ -47,7 +58,7 @@ exports.handler = async function () {
       })
     );
 
-    const resources = results
+    const media = results
       .flat()
       .map(function (item) {
         return {
@@ -63,35 +74,56 @@ exports.handler = async function () {
         return Boolean(item.url);
       });
 
-    resources.sort(function (a, b) {
-      return new Date(b.created_at) -
-        new Date(a.created_at);
+    let news = [];
+
+    if (token && repo) {
+      const response = await fetch(
+        "https://api.github.com/repos/" +
+          repo +
+          "/contents/data/posts.json?ref=main",
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28"
+          }
+        }
+      );
+
+      if (response.ok) {
+        const file = await response.json();
+        const posts = JSON.parse(
+          Buffer.from(file.content, "base64").toString("utf8")
+        );
+
+        if (Array.isArray(posts)) {
+          news = posts.filter(function (post) {
+            return post &&
+              post.type === "news" &&
+              typeof post.title === "string";
+          });
+        }
+      } else if (response.status !== 404) {
+        throw new Error(
+          "GitHub returned HTTP " + response.status
+        );
+      }
+    }
+
+    const resources = [
+      ...media,
+      ...news
+    ].sort(function (a, b) {
+      return new Date(b.created_at || 0) -
+        new Date(a.created_at || 0);
     });
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      },
-      body: JSON.stringify({
-        resources: resources
-      })
-    };
+    return reply(200, { resources: resources });
   } catch (error) {
-    console.error("Gallery media error:", error.message);
+    console.error("Gallery loading error:", error.message);
 
-    return {
-      statusCode: 502,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store"
-      },
-      body: JSON.stringify({
-        error: "Unable to load Cloudinary media.",
-        details: error.message
-      })
-    };
+    return reply(502, {
+      error: "Unable to load gallery posts."
+    });
   }
 };
-    
