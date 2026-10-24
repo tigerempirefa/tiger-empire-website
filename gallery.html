@@ -177,25 +177,29 @@ document.querySelectorAll("[data-filter]").forEach(button => {
   });
 });
 
+
 (async function loadMedia() {
   empty.hidden = false;
   empty.textContent = "Loading Tiger Empire media...";
 
   try {
-    const response = await fetch(
-      "/.netlify/functions/gallery-media",
-      { cache: "no-store" }
-    );
+    const response = await fetch("/data/post.json", {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("Could not load post.json");
+    }
 
     const data = await response.json();
 
-    if (!response.ok || !Array.isArray(data.resources)) {
-      throw new Error("Could not load media.");
+    if (!Array.isArray(data)) {
+      throw new Error("Post data format is incorrect");
     }
 
-    mediaItems = data.resources.filter(item =>
+    mediaItems = data.filter(item =>
+      item &&
       item.url &&
-      !item.url.includes("/samples/") &&
       (item.type === "photo" || item.type === "video")
     );
 
@@ -204,7 +208,8 @@ document.querySelectorAll("[data-filter]").forEach(button => {
     gallery.innerHTML = "";
     empty.hidden = false;
     empty.textContent =
-      "Unable to load media right now. Please try again later.";
+      "Unable to load posts. Please try again later.";
+    console.error("Gallery loading error:", error);
   }
 })();
 </script>
