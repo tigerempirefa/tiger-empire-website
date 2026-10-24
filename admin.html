@@ -70,7 +70,54 @@
     </button>
     <p id="status" role="status"></p>
   </div>
+  
+  <div class="panel">
+    <h2>🐅 Player Management</h2>
+    <p>Add or update a squad player's profile and statistics.</p>
 
+    <label>Player name</label>
+    <input id="playerName" placeholder="Full player name">
+
+    <label>Jersey number</label>
+    <input id="playerNumber" type="number" placeholder="10">
+
+    <label>Position</label>
+    <select id="playerPosition">
+      <option value="">Choose position</option>
+      <option>Goalkeeper</option>
+      <option>Defender</option>
+      <option>Midfielder</option>
+      <option>Forward</option>
+    </select>
+
+    <label>Age group</label>
+    <select id="playerAgeGroup">
+      <option value="">Choose age group</option>
+      <option>U13</option>
+      <option>U15</option>
+      <option>U17</option>
+      <option>Senior</option>
+    </select>
+
+    <label>Cloudinary photo URL</label>
+    <input id="playerPhoto" placeholder="Paste player photo URL">
+
+    <label>Goals</label>
+    <input id="playerGoals" type="number" min="0" value="0">
+
+    <label>Assists</label>
+    <input id="playerAssists" type="number" min="0" value="0">
+
+    <label>Appearances</label>
+    <input id="playerAppearances" type="number" min="0" value="0">
+
+    <button type="button" onclick="savePlayer()">
+      Save Player Profile
+    </button>
+
+    <p id="playerStatus" role="status"></p>
+  </div>
+  
   <script>
     async function publishPost() {
       const password =
