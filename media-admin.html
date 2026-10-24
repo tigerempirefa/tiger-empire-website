@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiger Empire Admin Dashboard</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101410;color:#fff;font-family:Arial,sans-serif}
+header{background:#1b281b;padding:22px;text-align:center;border-bottom:3px solid #a5ff00}
+h1{color:#a5ff00;margin:0;font-size:24px}
+main{max-width:650px;margin:25px auto;padding:18px}
+.panel{background:#1b211b;border:1px solid #394439;border-radius:12px;padding:20px;margin-bottom:20px}
+h2{font-size:19px;margin-top:0}
+p{color:#d0d8d0;line-height:1.5}
+input,textarea,button{width:100%;padding:13px;margin:8px 0;border-radius:7px;font-size:16px}
+input,textarea{background:#fff;color:#111;border:1px solid #aaa}
+textarea{min-height:100px}
+button{background:#a5ff00;color:#111;font-weight:bold;border:0;cursor:pointer}
+button:disabled{opacity:.6}
+#status{white-space:pre-wrap;overflow-wrap:anywhere}
+a{color:#a5ff00}
+</style>
+</head>
+<body>
+<header>
+<h1>TIGER EMPIRE</h1>
+<p>FOOTBALL ACADEMY — ADMIN DASHBOARD</p>
+</header>
+
+<main>
+<div class="panel">
+<h2>📸 Add Photos or Videos</h2>
+<p>Select a photo or video from your phone. After uploading, it can appear in your website gallery.</p>
+<input id="media" type="file" accept="image/*,video/*">
+<button id="upload">Upload Photo / Video</button>
+<p id="status">Ready to upload.</p>
+</div>
+
+<div class="panel">
+<h2>📰 News and Announcements</h2>
+<p>Prepare your academy news here. This section is a draft only; publishing news permanently will require the next setup step.</p>
+<input id="headline" placeholder="News headline">
+<textarea id="story" placeholder="Write your academy news here..."></textarea>
+<button id="copyNews">Copy News</button>
+<p id="newsStatus"></p>
+</div>
+
+<div class="panel">
+<h2>🌐 Website</h2>
+<p>Open your Tiger Empire website to check your gallery.</p>
+<a href="https://www.tigerempirefa.com" target="_blank" rel="noopener">Open Tiger Empire Website</a>
+</div>
+</main>
+
+<script>
+const cloudName = "atizh0zv";
+const uploadPreset = "tiger_empire_gallery";
+
+document.getElementById("upload").addEventListener("click", async () => {
+  const file = document.getElementById("media").files[0];
+  const status = document.getElementById("status");
+  const button = document.getElementById("upload");
+
+  if (!file) {
+    status.textContent = "Please choose a photo or video first.";
+    return;
+  }
+
+  button.disabled = true;
+  status.textContent = "Uploading... Please wait.";
+
+  try {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", uploadPreset);
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+      { method: "POST", body: data }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error?.message || "Upload failed.");
+    }
+
+    status.textContent =
+      "Upload successful!\n\nFile: " + (result.original_filename || file.name) +
+      "\n\nRefresh your website gallery to check it.";
+    document.getElementById("media").value = "";
+  } catch (error) {
+    status.textContent = "Upload error: " + error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById("copyNews").addEventListener("click", async () => {
+  const headline = document.getElementById("headline").value.trim();
+  const story = document.getElementById("story").value.trim();
+  const status = document.getElementById("newsStatus");
+
+  if (!headline || !story) {
+    status.textContent = "Please enter both a headline and the news.";
+    return;
+  }
+
+  const news = headline + "\n\n" + story;
+
+  try {
+    await navigator.clipboard.writeText(news);
+    status.textContent = "News copied. Permanent publishing is not set up yet.";
+  } catch {
+    status.textContent = news + "\n\nSelect and copy this text.";
+  }
+});
+</script>
+</body>
+</html>
