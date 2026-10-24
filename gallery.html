@@ -199,9 +199,12 @@ document.querySelectorAll("[data-filter]").forEach(button => {
     }
 
     mediaItems = data
-      .filter(item => item && item.url &&
-        (item.type === "photo" || item.type === "video"))
-      .filter(item => !item.url.includes("/samples/"));
+  .filter(item => item && item.url &&
+    (item.type === "photo" || item.type === "video"))
+  .filter(item =>
+    !item.url.toLowerCase().includes("/samples/") &&
+    !String(item.title || "").toLowerCase().includes("sample")
+  );
 
     renderGallery();
   } catch (error) {
