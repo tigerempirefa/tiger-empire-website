@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tiger Empire Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #101010;
+      color: white;
+      padding: 20px;
+      max-width: 650px;
+      margin: auto;
+    }
+    h1 { color: #39ff14; }
+    input, select, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      background: #39ff14;
+      border: none;
+      font-weight: bold;
+    }
+    .panel {
+      background: #222;
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 10px;
+    }
+    a { color: #39ff14; }
+  </style>
+</head>
+<body>
+  <h1>🐅 TIGER EMPIRE</h1>
+  <h2>Admin Dashboard</h2>
+  <p>Prepare a photo, video, or news post for your website.</p>
+
+  <div class="panel">
+    <h3>Add media or news</h3>
+    <label>Post type</label>
+    <select id="type">
+      <option>Photo</option>
+      <option>Video</option>
+      <option>News</option>
+    </select>
+
+    <label>Title or news headline</label>
+    <input id="title" placeholder="Enter a title">
+
+    <label>Cloudinary photo or video URL</label>
+    <input id="url" placeholder="Paste your Cloudinary URL">
+
+    <button onclick="preparePost()">Prepare post</button>
+    <p id="result"></p>
+    <button onclick="copyPost()">Copy prepared post</button>
+  </div>
+
+  <script>
+    function preparePost() {
+      const type = document.getElementById('type').value;
+      const title = document.getElementById('title').value.trim();
+      const url = document.getElementById('url').value.trim();
+
+      if (!title) {
+        alert('Please enter a title or headline.');
+        return;
+      }
+      if (type !== 'News' && !url) {
+        alert('Please paste the Cloudinary URL.');
+        return;
+      }
+
+      const post = {
+        type: type.toLowerCase(),
+        title: title,
+        url: url
+      };
+
+      document.getElementById('result').textContent =
+        JSON.stringify(post, null, 2);
+    }
+
+    function copyPost() {
+      const result = document.getElementById('result').textContent;
+      if (!result) {
+        alert('Prepare your post first.');
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(result)
+          .then(() => alert('Post copied!'))
+          .catch(() => alert('Please select and copy the prepared text.'));
+      } else {
+        alert('Please select and copy the prepared text.');
+      }
+    }
+  </script>
+</body>
+</html>
