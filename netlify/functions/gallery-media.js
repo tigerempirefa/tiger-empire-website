@@ -35,8 +35,11 @@ exports.handler = async function () {
         });
 
         if (!response.ok) {
-          throw new Error("Cloudinary request failed.");
-        }
+  const details = await response.text();
+  throw new Error(
+    "Cloudinary HTTP " + response.status + ": " + details
+  );
+}
 
         const data = await response.json();
         return data.resources || [];
@@ -74,6 +77,19 @@ exports.handler = async function () {
       })
     };
   } catch (error) {
+  console.error("Gallery media error:", error.message);
+
+  return {
+    statusCode: 502,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      error: "Unable to load Cloudinary media.",
+      details: error.message
+    })
+  };
+}
     return {
       statusCode: 502,
       headers: {
