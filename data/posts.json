@@ -1,6 +1,13 @@
 [
   {
     "type": "photo",
+    "title": "Test photo",
+    "url": "https://res.cloudinary.com/atizh0zv/image/upload/ssizrddwwpcvxbe5yqme.jpg",
+    "content": "Testing pic",
+    "created_at": "2026-10-24T16:23:35.279Z"
+  },
+  {
+    "type": "photo",
     "title": "Tigers",
     "url": "https://res.cloudinary.com/atizh0zv/image/upload/ssizrddwwpcvxbe5yqme.jpg",
     "content": "",
