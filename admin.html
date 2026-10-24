@@ -15,7 +15,7 @@
       margin: auto;
     }
     h1 { color: #39ff14; }
-    input, select, button {
+    input, select, textarea, button {
       box-sizing: border-box;
       width: 100%;
       padding: 12px;
@@ -27,6 +27,7 @@
       background: #39ff14;
       border: none;
       font-weight: bold;
+      cursor: pointer;
     }
     .panel {
       background: #222;
@@ -34,71 +35,113 @@
       margin: 16px 0;
       border-radius: 10px;
     }
-    a { color: #39ff14; }
+    #status { white-space: pre-wrap; }
   </style>
 </head>
 <body>
   <h1>🐅 TIGER EMPIRE</h1>
   <h2>Admin Dashboard</h2>
-  <p>Prepare a photo, video, or news post for your website.</p>
+  <p>Publish photos, videos, and news.</p>
 
   <div class="panel">
-    <h3>Add media or news</h3>
+    <label>Admin password</label>
+    <input id="password" type="password"
+      placeholder="Enter your admin password">
+
     <label>Post type</label>
     <select id="type">
-      <option>Photo</option>
-      <option>Video</option>
-      <option>News</option>
+      <option value="photo">Photo</option>
+      <option value="video">Video</option>
+      <option value="news">News</option>
     </select>
 
     <label>Title or news headline</label>
     <input id="title" placeholder="Enter a title">
 
     <label>Cloudinary photo or video URL</label>
-    <input id="url" placeholder="Paste your Cloudinary URL">
+    <input id="url" placeholder="Paste Cloudinary URL">
 
-    <button onclick="preparePost()">Prepare post</button>
-    <p id="result"></p>
-    <button onclick="copyPost()">Copy prepared post</button>
+    <label>News content (optional)</label>
+    <textarea id="content" rows="4"
+      placeholder="Write your news here"></textarea>
+
+    <button id="publish" onclick="publishPost()">
+      Publish Post
+    </button>
+    <p id="status" role="status"></p>
   </div>
 
   <script>
-    function preparePost() {
-      const type = document.getElementById('type').value;
-      const title = document.getElementById('title').value.trim();
-      const url = document.getElementById('url').value.trim();
+    async function publishPost() {
+      const password =
+        document.getElementById("password").value;
+      const type = document.getElementById("type").value;
+      const title =
+        document.getElementById("title").value.trim();
+      const url =
+        document.getElementById("url").value.trim();
+      const content =
+        document.getElementById("content").value.trim();
+      const status = document.getElementById("status");
+      const button = document.getElementById("publish");
 
-      if (!title) {
-        alert('Please enter a title or headline.');
+      if (!password || !title) {
+        status.textContent =
+          "Enter your admin password and a title.";
         return;
       }
-      if (type !== 'News' && !url) {
-        alert('Please paste the Cloudinary URL.');
+
+      if (type !== "news" && !url) {
+        status.textContent =
+          "Paste the Cloudinary URL for your photo or video.";
         return;
       }
 
-      const post = {
-        type: type.toLowerCase(),
-        title: title,
-        url: url
-      };
-
-      document.getElementById('result').textContent =
-        JSON.stringify(post, null, 2);
-    }
-
-    function copyPost() {
-      const result = document.getElementById('result').textContent;
-      if (!result) {
-        alert('Prepare your post first.');
+      if (type === "news" && !content) {
+        status.textContent =
+          "Please write the news content.";
         return;
       }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(result)
-          .then(() => alert('Post copied!'))
-          .catch(() => alert('Please select and copy the prepared text.'));
-      } else {
-        alert('Please select and copy the prepared text.');
+
+      button.disabled = true;
+      status.textContent = "Publishing...";
+
+      try {
+        const response = await fetch(
+          "/.netlify/functions/publish-post",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              password,
+              type,
+              title,
+              url,
+              content
+            })
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error || "Publishing failed."
+          );
+        }
+
+        status.textContent =
+          "Success! Your post was saved. The website gallery must also read the posts file to display it.";
+
+        document.getElementById("title").value = "";
+        document.getElementById("url").value = "";
+        document.getElementById("content").value = "";
+      } catch (error) {
+        status.textContent = error.message;
+      } finally {
+        button.disabled = false;
       }
     }
   </script>
