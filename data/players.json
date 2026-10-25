@@ -8,5 +8,15 @@
     "goals": 3,
     "assists": 3,
     "appearances": 5
+  },
+  {
+    "name": "Ifeanyi Deric Aniagolu",
+    "number": "2",
+    "position": "Defender",
+    "age_group": "U15",
+    "photo": "",
+    "goals": 0,
+    "assists": 0,
+    "appearances": 5
   }
 ]
