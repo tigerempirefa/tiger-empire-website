@@ -69,6 +69,17 @@
       Publish Post
     </button>
     <p id="status" role="status"></p>
+    
+    <hr>
+    <h3>🗑️ Delete News</h3>
+    <label>News headline to delete</label>
+    <input id="deleteTitle" placeholder="Enter the exact news headline">
+
+    <button type="button" onclick="deleteNews()"
+      style="background:#ff3333;color:white;">
+      Delete News
+    </button>
+    <p id="deleteStatus" role="status"></p>
   </div>
   
   <div class="panel">
@@ -238,6 +249,55 @@
       }
     }
 
+    async function deleteNews() {
+      const password =
+        document.getElementById("password").value.trim();
+      const title =
+        document.getElementById("deleteTitle").value.trim();
+      const status =
+        document.getElementById("deleteStatus");
+
+      if (!password || !title) {
+        status.textContent =
+          "Enter your admin password and the exact news headline.";
+        return;
+      }
+
+      if (!confirm('Are you sure you want to delete "' + title + '"?')) {
+        return;
+      }
+
+      status.textContent = "Deleting news...";
+
+      try {
+        const response = await fetch(
+          "/.netlify/functions/published-post",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              password: password,
+              action: "delete",
+              title: title
+            })
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Could not delete news.");
+        }
+
+        status.textContent = "News deleted successfully!";
+        document.getElementById("deleteTitle").value = "";
+      } catch (error) {
+        status.textContent = error.message;
+      }
+          }
+    
   </script>
 </body>
 </html>
