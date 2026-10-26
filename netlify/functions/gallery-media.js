@@ -96,13 +96,22 @@ exports.handler = async function () {
           Buffer.from(file.content, "base64").toString("utf8")
         );
 
-        if (Array.isArray(posts)) {
-          news = posts.filter(function (post) {
-            return post &&
-              post.type === "news" &&
-              typeof post.title === "string";
-          });
-        }
+        
+if (Array.isArray(posts)) {
+  news = posts.filter(function (post) {
+    return post &&
+      ["photo", "video", "news"].includes(post.type) &&
+      typeof post.title === "string" &&
+      (
+        post.type === "news" ||
+        (
+          typeof post.url === "string" &&
+          post.url.startsWith("https://res.cloudinary.com/")
+        )
+      );
+  });
+}
+        
       } else if (response.status !== 404) {
         throw new Error(
           "GitHub returned HTTP " + response.status
