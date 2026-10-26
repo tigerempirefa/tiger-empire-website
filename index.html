@@ -332,7 +332,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
   try {
     const response = await fetch(
-      "/.netlify/functions/gallery-media",
+      "/data/posts.json",
       { cache: "no-store" }
     );
 
