@@ -228,18 +228,22 @@
       const status = document.getElementById("playerStatus");
       const password = document.getElementById("password").value;
 
-      const player = {
-        password: password,
-        action: "save",
-        name: document.getElementById("playerName").value.trim(),
-        number: document.getElementById("playerNumber").value.trim(),
-        position: document.getElementById("playerPosition").value,
-        age_group: document.getElementById("playerAgeGroup").value,
-        photo: document.getElementById("playerPhoto").value.trim(),
-        goals: document.getElementById("playerGoals").value,
-        assists: document.getElementById("playerAssists").value,
-        appearances: document.getElementById("playerAppearances").value
-      };
+      const originalName =
+  document.getElementById("editPlayerName").value.trim();
+
+const player = {
+  password: password,
+  action: originalName ? "update" : "save",
+  original_name: originalName,
+  name: document.getElementById("playerName").value.trim(),
+  number: document.getElementById("playerNumber").value.trim(),
+  position: document.getElementById("playerPosition").value,
+  age_group: document.getElementById("playerAgeGroup").value,
+  photo: document.getElementById("playerPhoto").value.trim(),
+  goals: document.getElementById("playerGoals").value,
+  assists: document.getElementById("playerAssists").value,
+  appearances: document.getElementById("playerAppearances").value
+};
 
       if (!password || !player.name || !player.position || !player.age_group) {
         status.textContent = "Enter the admin password, player name, position and age group.";
