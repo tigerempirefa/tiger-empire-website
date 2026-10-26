@@ -66,7 +66,7 @@ exports.handler = async function () {
           type: item.resource_type === "video"
             ? "video"
             : "photo",
-          title: item.public_id.split("/").pop(),
+          title: "Tiger Empire Academy",
           created_at: item.created_at
         };
       })
