@@ -127,7 +127,20 @@
     </button>
 
     <p id="playerStatus" role="status"></p>
-  </div>
+    
+<hr>
+<h3>🗑️ Delete Player from Squad</h3>
+
+<label>Player name to delete</label>
+<input id="deletePlayerName" placeholder="Enter the exact player name">
+
+<button type="button" onclick="deletePlayer()"
+  style="background:#ff3333;color:white;">
+  Delete Player from Squad
+</button>
+
+<p id="deletePlayerStatus" role="status"></p>
+    </div>
   
   <script>
     async function publishPost() {
@@ -297,6 +310,57 @@
         status.textContent = error.message;
       }
           }
+ 
+    async function deletePlayer() {
+      const password =
+        document.getElementById("password").value.trim();
+      const name =
+        document.getElementById("deletePlayerName").value.trim();
+      const status =
+        document.getElementById("deletePlayerStatus");
+
+      if (!password || !name) {
+        status.textContent =
+          "Enter your admin password and the exact player name.";
+        return;
+      }
+
+      if (!confirm('Are you sure you want to remove "' + name + '" from the squad?')) {
+        return;
+      }
+
+      status.textContent = "Deleting player...";
+
+      try {
+        const response = await fetch(
+          "/.netlify/functions/published-player",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              password: password,
+              action: "delete",
+              name: name
+            })
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Could not delete player.");
+        }
+
+        status.textContent =
+          "Player removed successfully from the squad!";
+        document.getElementById("deletePlayerName").value = "";
+      } catch (error) {
+        status.textContent =
+          error.message || "Could not delete player.";
+      }
+  }
     
   </script>
 </body>
