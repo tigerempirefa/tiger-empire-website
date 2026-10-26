@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team News | Tiger Empire Football Academy</title>
+  <style>
+    :root {
+      --bg: #090909;
+      --panel: #171717;
+      --green: #b7ff00;
+      --white: #f7f7f7;
+      --muted: #b8b8b8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 28px 18px;
+      text-align: center;
+      background: #141414;
+      border-bottom: 2px solid var(--green);
+    }
+
+    header h1 {
+      color: var(--green);
+      margin: 0 0 8px;
+    }
+
+    header p { margin: 0; color: var(--muted); }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      padding: 15px;
+      background: #101010;
+    }
+
+    nav a {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover { color: var(--green); }
+
+    main {
+      max-width: 850px;
+      margin: auto;
+      padding: 24px 16px;
+    }
+
+    .news-card {
+      background: var(--panel);
+      border: 1px solid #303030;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 18px;
+      overflow-wrap: anywhere;
+    }
+
+    .news-card h2 {
+      color: var(--green);
+      margin: 0 0 10px;
+    }
+
+    .date {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    #status { color: var(--muted); text-align: center; }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+      background: #141414;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TEAM NEWS</h1>
+    <p>Tiger Empire Football Academy · Fear the Roar!</p>
+  </header>
+
+  <nav aria-label="News navigation">
+    <a href="index.html">Home</a>
+    <a href="index.html#about">About</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="registration.html">Register a Player</a>
+  </nav>
+
+  <main>
+    <p id="status">Loading academy news...</p>
+    <section id="news-list" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    © 2026 Tiger Empire Football Academy · Talent • Discipline • Teamwork
+  </footer>
+
+  <script>
+    (async function () {
+      const status = document.getElementById("status");
+      const list = document.getElementById("news-list");
+
+      try {
+        const response = await fetch("/.netlify/functions/gallery-media");
+        if (!response.ok) throw new Error("Unable to load news");
+
+        const data = await response.json();
+        const news = (data.resources || [])
+          .filter(item => item && item.type === "news" && item.title)
+          .sort((a, b) =>
+            new Date(b.created_at || 0) -
+            new Date(a.created_at || 0)
+          );
+
+        list.innerHTML = "";
+
+        if (!news.length) {
+          status.textContent = "No team news has been published yet.";
+          return;
+        }
+
+        news.forEach(item => {
+          const article = document.createElement("article");
+          article.className = "news-card";
+
+          const heading = document.createElement("h2");
+          heading.textContent = item.title;
+          article.appendChild(heading);
+
+          if (item.created_at) {
+            const date = document.createElement("div");
+            date.className = "date";
+            const parsedDate = new Date(item.created_at);
+            date.textContent = isNaN(parsedDate.getTime())
+              ? ""
+              : parsedDate.toLocaleDateString();
+            article.appendChild(date);
+          }
+
+          if (item.content) {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = item.content;
+            article.appendChild(paragraph);
+          }
+
+          list.appendChild(article);
+        });
+
+        status.textContent = "";
+      } catch (error) {
+        status.textContent =
+          "Team news is temporarily unavailable. Please try again later.";
+      }
+    })();
+  </script>
+</body>
+</html>
+  
