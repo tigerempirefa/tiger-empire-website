@@ -75,7 +75,18 @@ exports.handler = async function (event) {
         name.toLowerCase()
     );
 
-    if (action === "delete") {
+    
+if (action === "get") {
+  if (index === -1) {
+    return reply(404, { error: "Player not found." });
+  }
+
+  return reply(200, {
+    success: true,
+    player: players[index]
+  });
+} else if (action === "delete") {
+  
       if (index === -1) {
         return reply(404, { error: "Player not found." });
       }
