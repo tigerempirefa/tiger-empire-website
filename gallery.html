@@ -97,15 +97,9 @@
       <button class="active" data-filter="all">All</button>
       <button data-filter="photo">Photos</button>
       <button data-filter="video">Videos</button>
-      <button data-filter="news">Team News</button>
     </div>
 
     <section class="grid" id="gallery">
-      <article class="item" data-type="news">
-        <h3>Welcome to Tiger Empire</h3>
-        <p>Our official gallery is ready for academy photos, match videos
-        and team news. Media items will appear here when added.</p>
-      </article>
     </section>
     <p class="empty" id="empty" hidden>No items in this category yet.</p>
   </main>
@@ -211,11 +205,15 @@ document.querySelectorAll("[data-filter]").forEach(button => {
     }
 
     mediaItems = data
-  .filter(item => item && (
-    (item.type === "photo" && item.url) ||
-    (item.type === "video" && item.url) ||
-    (item.type === "news" && item.title)
-  ))
+  .filter(item =>
+    item &&
+    (item.type === "photo" || item.type === "video") &&
+    item.url
+  )
+  .filter(item =>
+    !item.url.toLowerCase().includes("/samples/") &&
+    !String(item.title || "").toLowerCase().includes("sample")
+  );
   .filter(item =>
   (!item.url || !item.url.toLowerCase().includes("/samples/")) &&
   !String(item.title || "").toLowerCase().includes("sample")
