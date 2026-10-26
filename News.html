@@ -140,6 +140,17 @@
         news.forEach(item => {
           const article = document.createElement("article");
           article.className = "news-card";
+          
+if (item.url) {
+  const picture = document.createElement("img");
+  picture.src = item.url;
+  picture.alt = item.title || "Tiger Empire Academy news";
+  picture.loading = "lazy";
+  picture.style.cssText =
+    "width:100%;max-height:420px;object-fit:cover;border-radius:8px;margin-bottom:15px;";
+  article.appendChild(picture);
+}
+          
 
           const heading = document.createElement("h2");
           heading.textContent = item.title;
