@@ -324,5 +324,108 @@ document.getElementById('year').textContent = new Date().getFullYear();
   });
 })();
 </script>
-  </body>
+  
+<script>
+(async function () {
+  const list = document.getElementById("homepage-news-list");
+  if (!list) return;
+
+  try {
+    const response = await fetch(
+      "/.netlify/functions/gallery-media",
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+      throw new Error("Could not load news");
+    }
+
+    const result = await response.json();
+    const data = Array.isArray(result)
+      ? result
+      : result.resources;
+
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid news data");
+    }
+
+    const news = data
+      .filter(item =>
+        item &&
+        item.type === "news" &&
+        item.title
+      )
+      .sort((a, b) =>
+        new Date(b.created_at || 0) -
+        new Date(a.created_at || 0)
+      );
+
+    list.innerHTML = "";
+
+    if (news.length === 0) {
+      list.textContent = "No team news published yet.";
+      return;
+    }
+
+    news.forEach(item => {
+      const card = document.createElement("article");
+      card.style.cssText =
+        "background:#1c2116;border:1px solid #3a4430;" +
+        "border-radius:12px;overflow:hidden;margin:20px 0;";
+
+      if (item.url) {
+        const image = document.createElement("img");
+        image.src = item.url;
+        image.alt = item.title;
+        image.loading = "lazy";
+        image.style.cssText =
+          "display:block;width:100%;max-height:380px;" +
+          "object-fit:cover;";
+        card.appendChild(image);
+      }
+
+      const heading = document.createElement("h3");
+      heading.textContent = item.title;
+      heading.style.cssText =
+        "color:#b7ff00;padding:0 16px;";
+
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.textContent = "Read Full Story +";
+      toggle.style.cssText =
+        "margin:0 16px 16px;padding:10px 14px;" +
+        "background:#b7ff00;color:#10130c;border:0;" +
+        "border-radius:6px;font-weight:bold;cursor:pointer;";
+
+      const story = document.createElement("div");
+      story.hidden = true;
+      story.style.cssText =
+        "padding:0 16px 18px;color:white;line-height:1.7;";
+
+      const paragraph = document.createElement("p");
+      paragraph.textContent = item.content || "";
+      story.appendChild(paragraph);
+
+      toggle.addEventListener("click", () => {
+        story.hidden = !story.hidden;
+        toggle.textContent = story.hidden
+          ? "Read Full Story +"
+          : "Collapse Story −";
+      });
+
+      card.appendChild(heading);
+      card.appendChild(toggle);
+      card.appendChild(story);
+      list.appendChild(card);
+    });
+
+  } catch (error) {
+    list.textContent =
+      "Team news is temporarily unavailable.";
+    console.error("Homepage news error:", error);
+  }
+})();
+</script>
+</body>
 </html>
+
