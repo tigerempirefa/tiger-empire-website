@@ -144,11 +144,6 @@ form{display:grid;gap:14px;max-width:650px}label{font-size:13px;color:#ddd;displ
       heading.style.color = "#b7ff00";
       card.appendChild(heading);
 
-      if (item.type === "news" && item.content) {
-        const paragraph = document.createElement("p");
-        paragraph.textContent = item.content;
-        card.appendChild(paragraph);
-      }
 
       gallery.appendChild(card);
     });
