@@ -68,12 +68,17 @@ exports.handler = async function (event) {
       "base64"
     ).toString("utf8");
 
-    const players = JSON.parse(decoded);
-    const index = players.findIndex(
-      player =>
-        String(player.name || "").toLowerCase() ===
-        name.toLowerCase()
-    );
+    const lookupName =
+  action === "update"
+    ? String(input.original_name || "").trim()
+    : name;
+
+const index = players.findIndex(
+  player =>
+    String(player.name || "").toLowerCase() ===
+    lookupName.toLowerCase()
+);
+    
 
     
 if (action === "get") {
