@@ -67,6 +67,8 @@ exports.handler = async function (event) {
       fileData.content.replace(/\n/g, ""),
       "base64"
     ).toString("utf8");
+    
+    const players = JSON.parse(decoded);
 
     const lookupName =
   action === "update"
