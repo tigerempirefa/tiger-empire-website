@@ -106,12 +106,17 @@ form{display:grid;gap:14px;max-width:650px}label{font-size:13px;color:#ddd;displ
       const card = document.createElement("article");
       card.style.cssText = "background:#1c2116;padding:14px;border-radius:10px;overflow:hidden;";
 
-      if (item.type === "photo") {
+       if (item.type === "photo") {
         const img = document.createElement("img");
         img.src = item.url;
         img.alt = item.title || "Tiger Empire Academy";
         img.loading = "lazy";
         img.style.cssText = "width:100%;max-height:240px;object-fit:cover;border-radius:7px;";
+
+        img.addEventListener("error", function () {
+          card.remove();
+        });
+
         card.appendChild(img);
       } else if (item.type === "video") {
         const video = document.createElement("video");
@@ -120,7 +125,13 @@ form{display:grid;gap:14px;max-width:650px}label{font-size:13px;color:#ddd;displ
         video.preload = "metadata";
         video.playsInline = true;
         video.style.cssText = "width:100%;max-height:240px;border-radius:7px;";
+
+        video.addEventListener("error", function () {
+          card.remove();
+        });
+
         card.appendChild(video);
+        
       } else if (item.type === "news") {
         const label = document.createElement("p");
         label.textContent = "📰 TEAM NEWS";
