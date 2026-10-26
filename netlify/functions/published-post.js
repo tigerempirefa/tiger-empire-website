@@ -39,20 +39,27 @@ exports.handler = async function (event) {
     return reply(401, { error: "Incorrect admin password." });
   }
 
-  if (
-    !["photo", "video", "news"].includes(post.type) ||
-    typeof post.title !== "string" ||
-    !post.title.trim()
-  ) {
-    return reply(400, { error: "Invalid post details." });
-  }
+  if (post.action === "delete") {
+    if (typeof post.title !== "string" || !post.title.trim()) {
+      return reply(400, { error: "Enter the exact news headline." });
+    }
+  } else {
+    if (
+      !["photo", "video", "news"].includes(post.type) ||
+      typeof post.title !== "string" ||
+      !post.title.trim()
+    ) {
+      return reply(400, { error: "Invalid post details." });
+    }
 
-  if (
-    ["photo", "video"].includes(post.type) &&
-    (!post.url || !/^https:\/\/res\.cloudinary\.com\//.test(post.url))
-  ) {
-    return reply(400, { error: "Use a valid Cloudinary URL." });
+    if (
+      ["photo", "video"].includes(post.type) &&
+      (!post.url || !/^https:\/\/res\.cloudinary\.com\//.test(post.url))
+    ) {
+      return reply(400, { error: "Use a valid Cloudinary URL." });
+    }
   }
+  
 
   const api = "https://api.github.com/repos/" + repo +
     "/contents/data/posts.json";
@@ -80,6 +87,46 @@ exports.handler = async function (event) {
       throw new Error("Could not read the posts file.");
     }
 
+    if (post.action === "delete") {
+      const index = posts.findIndex(function (item) {
+        return item.type === "news" &&
+          item.title.trim() === post.title.trim();
+      });
+
+      if (index === -1) {
+        return reply(404, {
+          error: "No news found with that exact headline."
+        });
+      }
+
+      posts.splice(index, 1);
+
+      const update = await fetch(api, {
+        method: "PUT",
+        headers: {
+          ...options.headers,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: "Delete Tiger Empire news",
+          content: Buffer.from(
+            JSON.stringify(posts, null, 2)
+          ).toString("base64"),
+          sha: sha,
+          branch: "main"
+        })
+      });
+
+      if (!update.ok) {
+        throw new Error("GitHub could not delete the news.");
+      }
+
+      return reply(200, {
+        success: true,
+        message: "News deleted successfully."
+      });
+  }
+    
     const savedPost = {
       type: post.type,
       title: post.title.trim(),
