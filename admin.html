@@ -369,7 +369,64 @@
           error.message || "Could not delete player.";
       }
   }
-    
+
+    async function loadPlayerForEdit() {
+      const password =
+        document.getElementById("password").value.trim();
+      const name =
+        document.getElementById("editPlayerName").value.trim();
+      const status =
+        document.getElementById("playerStatus");
+
+      if (!password || !name) {
+        status.textContent =
+          "Enter your admin password and the existing player name.";
+        return;
+      }
+
+      status.textContent = "Loading player...";
+
+      try {
+        const response = await fetch(
+          "/.netlify/functions/published-player",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              password: password,
+              action: "get",
+              name: name
+            })
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Could not load player.");
+        }
+
+        const player = result.player;
+
+        document.getElementById("playerName").value = player.name || "";
+        document.getElementById("playerNumber").value = player.number || "";
+        document.getElementById("playerPosition").value = player.position || "";
+        document.getElementById("playerAgeGroup").value = player.age_group || "";
+        document.getElementById("playerPhoto").value = player.photo || "";
+        document.getElementById("playerGoals").value = player.goals ?? 0;
+        document.getElementById("playerAssists").value = player.assists ?? 0;
+        document.getElementById("playerAppearances").value = player.appearances ?? 0;
+
+        status.textContent =
+          "Player loaded. Edit the details, then tap Save Player Profile.";
+      } catch (error) {
+        status.textContent =
+          error.message || "Could not load player.";
+      }
+          }
+      
   </script>
 </body>
 </html>
