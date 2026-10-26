@@ -199,8 +199,8 @@ if (action === "update" && index === -1) {
           : "Player profile saved successfully."
     });
   } catch (error) {
-    return reply(500, {
-      error: "Could not process the player request."
-    });
+  return reply(500, {
+    error: "Could not process the player request: " + error.message
+  });
   }
 };
