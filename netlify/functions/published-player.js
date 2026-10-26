@@ -96,7 +96,7 @@ if (action === "get") {
         return reply(404, { error: "Player not found." });
       }
       players.splice(index, 1);
-    } else if (action === "save") {
+} else if (action === "save" || action === "update") {
       const number = String(input.number || "").trim();
       const position = String(input.position || "").trim();
       const ageGroup = String(input.age_group || "").trim();
@@ -139,7 +139,11 @@ if (action === "get") {
           error: "Statistics must be whole numbers."
         });
       }
-
+if (action === "update" && index === -1) {
+  return reply(404, {
+    error: "Original player not found. Please load the player again."
+  });
+}
       const oldPlayer = index >= 0 ? players[index] : {};
       const player = {
         ...oldPlayer,
