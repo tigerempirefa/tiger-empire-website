@@ -79,11 +79,25 @@
       style="background:#ff3333;color:white;">
       Delete News
     </button>
-    <p id="deleteStatus" role="status"></p>
-  </div>
+    
+<p id="deleteStatus" role="status"></p>
+</div>
+
+<div class="panel">
+  <h2>🗑️ Media Management</h2>
+  <p>Remove published photos and videos from the website without deleting the originals from Cloudinary.</p>
+
+  <button type="button" onclick="loadPublishedMedia()">
+    Load Published Photos & Videos
+  </button>
+
+  <p id="mediaStatus" role="status"></p>
+  <div id="publishedMediaList"></div>
+</div>
+
+<div class="panel">
+  <h2>🐅 Player Management</h2>
   
-  <div class="panel">
-    <h2>🐅 Player Management</h2>
     <p>Add or update a squad player's profile and statistics.</p>
 
 <label>Existing player name to edit</label>
@@ -321,8 +335,109 @@ const player = {
       } catch (error) {
         status.textContent = error.message;
       }
+      async function removePublishedMedia(url, title) {
+  const password = document.getElementById("password").value.trim();
+  const status = document.getElementById("mediaStatus");
+
+  if (!password) {
+    status.textContent = "Enter your admin password first.";
+    return;
+  }
+
+  if (!confirm('Remove "' + title + '" from the website? The Cloudinary original will remain safe.')) {
+    return;
+  }
+
+  status.textContent = "Removing media from the website...";
+
+  try {
+    const response = await fetch("/.netlify/functions/published-post", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        password: password,
+        action: "delete-media",
+        url: url
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Could not remove media.");
+    }
+
+    status.textContent = "Removed from the website. Cloudinary original is safe.";
+    await loadPublishedMedia();
+  } catch (error) {
+    status.textContent = error.message || "Could not remove media.";
+  }
+      }
           }
- 
+
+  async function loadPublishedMedia() {
+  const password = document.getElementById("password").value.trim();
+  const status = document.getElementById("mediaStatus");
+  const list = document.getElementById("publishedMediaList");
+
+  if (!password) {
+    status.textContent = "Enter your admin password first.";
+    return;
+  }
+
+  status.textContent = "Loading published photos and videos...";
+  list.innerHTML = "";
+
+  try {
+    const response = await fetch("/data/posts.json", { cache: "no-store" });
+    if (!response.ok) throw new Error("Could not load published posts.");
+
+    const posts = await response.json();
+    const media = posts.filter(post =>
+      post &&
+      ["photo", "video"].includes(post.type) &&
+      typeof post.url === "string" &&
+      post.url.startsWith("https://res.cloudinary.com/")
+    );
+
+    if (!media.length) {
+      status.textContent = "No published photos or videos found.";
+      return;
+    }
+
+    status.textContent = "Select the items you want to remove from the website.";
+
+    media.forEach(post => {
+      const item = document.createElement("div");
+      item.style.cssText = "padding:12px;margin:10px 0;border:1px solid #777;border-radius:8px;";
+
+      const title = document.createElement("p");
+      title.textContent = post.title || "Tiger Empire media";
+      item.appendChild(title);
+
+      const preview = post.type === "video"
+        ? document.createElement("video")
+        : document.createElement("img");
+
+      preview.src = post.url;
+      preview.style.cssText = "max-width:100%;max-height:180px;display:block;margin-bottom:10px;";
+      if (post.type === "video") preview.controls = true;
+      item.appendChild(preview);
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "Remove from Website";
+      button.style.cssText = "background:#ff3333;color:white;";
+      button.onclick = () => removePublishedMedia(post.url, post.title || "Tiger Empire media");
+      item.appendChild(button);
+
+      list.appendChild(item);
+    });
+  } catch (error) {
+    status.textContent = error.message || "Could not load media.";
+  }
+}
+    
     async function deletePlayer() {
       const password =
         document.getElementById("password").value.trim();
