@@ -30,7 +30,7 @@ exports.handler = async function () {
       apiKey + ":" + apiSecret
     ).toString("base64");
 
-    const types = [];
+    const types = ["image", "video"];
 
     const results = await Promise.all(
       types.map(async function (type) {
