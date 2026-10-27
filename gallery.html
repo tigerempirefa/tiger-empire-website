@@ -158,9 +158,24 @@ if (item.type === "video") {
     card.appendChild(img);
   }
 
-  const content = document.createElement("p");
-  content.textContent = item.content || "";
-  card.appendChild(content);
+const content = document.createElement("p");
+content.textContent = item.content || "";
+content.style.cssText = "color:#ffffff;line-height:1.7;white-space:pre-line;margin-top:12px;";
+content.style.display = "none";
+
+const toggle = document.createElement("button");
+toggle.textContent = "Read Full Story +";
+toggle.style.cssText = "background:none;border:none;color:#b7ff00;font-weight:bold;font-size:16px;padding:10px 0;cursor:pointer;";
+
+toggle.addEventListener("click", function () {
+  const isHidden = content.style.display === "none";
+  content.style.display = isHidden ? "block" : "none";
+  toggle.textContent = isHidden ? "Show Less −" : "Read Full Story +";
+});
+
+card.appendChild(toggle);
+card.appendChild(content);
+  
 }
     
     
