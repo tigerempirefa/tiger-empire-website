@@ -214,10 +214,7 @@ document.querySelectorAll("[data-filter]").forEach(button => {
     !item.url.toLowerCase().includes("/samples/") &&
     !String(item.title || "").toLowerCase().includes("sample")
   );
-  .filter(item =>
-  (!item.url || !item.url.toLowerCase().includes("/samples/")) &&
-  !String(item.title || "").toLowerCase().includes("sample")
-);
+    
 
     renderGallery();
   } catch (error) {
