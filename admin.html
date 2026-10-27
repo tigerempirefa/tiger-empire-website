@@ -428,7 +428,10 @@ const player = {
       button.type = "button";
       button.textContent = "Remove from Website";
       button.style.cssText = "background:#ff3333;color:white;";
-      button.onclick = () => removePublishedMedia(post.url, post.title || "Tiger Empire media");
+      button.onclick = function () {
+      document.getElementById("mediaStatus").textContent = "Button clicked. Starting removal...";
+        removePublishedMedia(post.url, post.title || "Tiger Empire media");
+      };
       item.appendChild(button);
 
       list.appendChild(item);
