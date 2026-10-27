@@ -332,10 +332,12 @@ const player = {
 
         status.textContent = "News deleted successfully!";
         document.getElementById("deleteTitle").value = "";
-      } catch (error) {
+            } catch (error) {
         status.textContent = error.message;
       }
-      async function removePublishedMedia(url, title) {
+    }
+
+    async function removePublishedMedia(url, title) {
   const password = document.getElementById("password").value.trim();
   const status = document.getElementById("mediaStatus");
 
@@ -373,7 +375,6 @@ const player = {
     status.textContent = error.message || "Could not remove media.";
   }
       }
-          }
 
   async function loadPublishedMedia() {
   const password = document.getElementById("password").value.trim();
