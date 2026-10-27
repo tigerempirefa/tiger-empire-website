@@ -75,11 +75,11 @@ form{display:grid;gap:14px;max-width:650px}label{font-size:13px;color:#ddd;displ
   const gallery = document.getElementById("tiger-latest-items");
 
   try {
-    const response = await fetch("/.netlify/functions/gallery-media");
+    const response = await fetch("/data/posts.json", { cache: "no-store" });
     if (!response.ok) throw new Error("Loading failed");
 
     const data = await response.json();
-    const items = (data.resources || [])
+    const items = (Array.isArray(data) ? data : (data.resources || []))
       .filter(item => item && (
         (item.type === "photo" && item.url) ||
         (item.type === "video" && item.url) ||
