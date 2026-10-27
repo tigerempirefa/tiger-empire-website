@@ -149,10 +149,20 @@ if (item.type === "video") {
   card.appendChild(img);
   
 } else if (item.type === "news") {
+  if (item.url) {
+    const img = document.createElement("img");
+    img.src = item.url;
+    img.alt = item.title || "Tiger Empire news photo";
+    img.loading = "lazy";
+    img.style.cssText = "width:100%;height:auto;display:block;border-radius:8px;margin-bottom:12px;";
+    card.appendChild(img);
+  }
+
   const content = document.createElement("p");
   content.textContent = item.content || "";
   card.appendChild(content);
-  }
+}
+    
     
 
     const heading = document.createElement("h3");
