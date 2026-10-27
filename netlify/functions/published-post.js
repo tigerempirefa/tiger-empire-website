@@ -40,24 +40,31 @@ exports.handler = async function (event) {
   }
 
   if (post.action === "delete") {
-    if (typeof post.title !== "string" || !post.title.trim()) {
-      return reply(400, { error: "Enter the exact news headline." });
-    }
-  } else {
-    if (
-      !["photo", "video", "news"].includes(post.type) ||
-      typeof post.title !== "string" ||
-      !post.title.trim()
-    ) {
-      return reply(400, { error: "Invalid post details." });
-    }
+  if (typeof post.title !== "string" || !post.title.trim()) {
+    return reply(400, { error: "Enter the exact news headline." });
+  }
+} else if (post.action === "delete-media") {
+  if (
+    typeof post.url !== "string" ||
+    !/^https:\/\/res\.cloudinary\.com\//.test(post.url)
+  ) {
+    return reply(400, { error: "Use a valid Cloudinary URL." });
+  }
+} else {
+  if (
+    !["photo", "video", "news"].includes(post.type) ||
+    typeof post.title !== "string" ||
+    !post.title.trim()
+  ) {
+    return reply(400, { error: "Invalid post details." });
+  }
 
-    if (
-      ["photo", "video"].includes(post.type) &&
-      (!post.url || !/^https:\/\/res\.cloudinary\.com\//.test(post.url))
-    ) {
-      return reply(400, { error: "Use a valid Cloudinary URL." });
-    }
+  if (
+    ["photo", "video"].includes(post.type) &&
+    (!post.url || !/^https:\/\/res\.cloudinary\.com\//.test(post.url))
+  ) {
+    return reply(400, { error: "Use a valid Cloudinary URL." });
+  }
   }
   
 
@@ -126,7 +133,45 @@ exports.handler = async function (event) {
         message: "News deleted successfully."
       });
   }
-    
+    if (post.action === "delete-media") {
+  const index = posts.findIndex(function (item) {
+    return ["photo", "video"].includes(item.type) &&
+      item.url === post.url;
+  });
+
+  if (index === -1) {
+    return reply(404, {
+      error: "This photo or video was not found in the published posts."
+    });
+  }
+
+  posts.splice(index, 1);
+
+  const update = await fetch(api, {
+    method: "PUT",
+    headers: {
+      ...options.headers,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: "Remove Tiger Empire media from website",
+      content: Buffer.from(
+        JSON.stringify(posts, null, 2)
+      ).toString("base64"),
+      sha: sha,
+      branch: "main"
+    })
+  });
+
+  if (!update.ok) {
+    throw new Error("GitHub could not remove the media from the website.");
+  }
+
+  return reply(200, {
+    success: true,
+    message: "Media removed from the website. Cloudinary original is safe."
+  });
+    }
     const savedPost = {
       type: post.type,
       title: post.title.trim(),
