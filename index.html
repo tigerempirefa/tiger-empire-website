@@ -129,11 +129,25 @@ form{display:grid;gap:14px;max-width:650px}label{font-size:13px;color:#ddd;displ
         card.appendChild(video);
         
       } else if (item.type === "news") {
-        const label = document.createElement("p");
-        label.textContent = "📰 TEAM NEWS";
-        label.style.color = "#b7ff00";
-        card.appendChild(label);
-      }
+  if (item.url && item.url.startsWith("https://res.cloudinary.com/")) {
+    const img = document.createElement("img");
+    img.src = item.url;
+    img.alt = item.title || "Tiger Empire Team News";
+    img.loading = "lazy";
+    img.style.cssText = "width:100%;max-height:240px;object-fit:cover;border-radius:7px;";
+
+    img.addEventListener("error", function () {
+      img.remove();
+    });
+
+    card.appendChild(img);
+  }
+
+  const label = document.createElement("p");
+  label.textContent = "📰 TEAM NEWS";
+  label.style.color = "#b7ff00";
+  card.appendChild(label);
+       }
 
       const heading = document.createElement("h3");
       heading.textContent = item.title || "Tiger Empire Update";
