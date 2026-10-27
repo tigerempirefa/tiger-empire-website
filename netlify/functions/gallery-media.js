@@ -119,15 +119,12 @@ if (Array.isArray(posts)) {
       }
     }
 
-    const resources = [
-      ...media,
-      ...news
-    ].sort(function (a, b) {
-      return new Date(b.created_at || 0) -
-        new Date(a.created_at || 0);
-    });
+    const resources = news.sort(function (a, b) {
+  return new Date(b.created_at || 0) -
+    new Date(a.created_at || 0);
+});
 
-    return reply(200, { resources: resources });
+return reply(200, { resources: resources });
   } catch (error) {
     console.error("Gallery loading error:", error.message);
 
