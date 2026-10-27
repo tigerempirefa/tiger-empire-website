@@ -169,78 +169,148 @@
     </div>
   
   <script>
-    async function publishPost() {
-      const password =
-        document.getElementById("password").value;
-      const type = document.getElementById("type").value;
-      const title =
-        document.getElementById("title").value.trim();
-      const url =
-        document.getElementById("url").value.trim();
-      const content =
-        document.getElementById("content").value.trim();
-      const status = document.getElementById("status");
-      const button = document.getElementById("publish");
+    
+async function publishPost() {
+  const password =
+    document.getElementById("password").value;
+  const type =
+    document.getElementById("type").value;
+  const title =
+    document.getElementById("title").value.trim();
+  const fileInput =
+    document.getElementById("mediaFile");
+  const file = fileInput.files[0];
+  const content =
+    document.getElementById("content").value.trim();
+  const status =
+    document.getElementById("status");
+  const button =
+    document.getElementById("publish");
 
-      if (!password || !title) {
-        status.textContent =
-          "Enter your admin password and a title.";
-        return;
-      }
+  if (!password || !title) {
+    status.textContent =
+      "Enter your admin password and a title.";
+    return;
+  }
 
-      if (type !== "news" && !url) {
-        status.textContent =
-          "Paste the Cloudinary URL for your photo or video.";
-        return;
-      }
+  if (type !== "news" && !file) {
+    status.textContent =
+      "Please select a photo or video from your phone.";
+    return;
+  }
 
-      if (type === "news" && !content) {
-        status.textContent =
-          "Please write the news content.";
-        return;
-      }
+  if (type === "news" && !content) {
+    status.textContent =
+      "Please write the news content.";
+    return;
+  }
 
-      button.disabled = true;
-      status.textContent = "Publishing...";
+  if (type === "photo" && file &&
+      !file.type.startsWith("image/")) {
+    status.textContent =
+      "For a photo post, please select an image.";
+    return;
+  }
 
-      try {
-        const response = await fetch(
-          "/.netlify/functions/published-post",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              password,
-              type,
-              title,
-              url,
-              content
-            })
-          }
-        );
+  if (type === "video" && file &&
+      !file.type.startsWith("video/")) {
+    status.textContent =
+      "For a video post, please select a video.";
+    return;
+  }
 
-        const result = await response.json();
+  if (type === "news" && file &&
+      !file.type.startsWith("image/")) {
+    status.textContent =
+      "For news, please select an image or leave it empty.";
+    return;
+  }
 
-        if (!response.ok) {
-          throw new Error(
-            result.error || "Publishing failed."
-          );
+  button.disabled = true;
+
+  try {
+    let url = "";
+
+    if (file) {
+      status.textContent =
+        "Uploading your media to Cloudinary...";
+
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append(
+        "upload_preset",
+        "tiger_empire_gallery"
+      );
+
+      const uploadResponse = await fetch(
+        "https://api.cloudinary.com/v1_1/atizh0zv/auto/upload",
+        {
+          method: "POST",
+          body: uploadData
         }
+      );
 
-        status.textContent =
-          "Success! Your post was saved. The website gallery must also read the posts file to display it.";
+      const uploadResult =
+        await uploadResponse.json();
 
-        document.getElementById("title").value = "";
-        document.getElementById("url").value = "";
-        document.getElementById("content").value = "";
-      } catch (error) {
-        status.textContent = error.message;
-      } finally {
-        button.disabled = false;
+      if (!uploadResponse.ok) {
+        throw new Error(
+          uploadResult.error?.message ||
+          "Cloudinary upload failed. Check your upload preset."
+        );
+      }
+
+      url = uploadResult.secure_url;
+
+      if (!url) {
+        throw new Error(
+          "Cloudinary did not return a media URL."
+        );
       }
     }
+
+    status.textContent =
+      "Publishing to your website...";
+
+    const response = await fetch(
+      "/.netlify/functions/published-post",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          password,
+          type,
+          title,
+          url,
+          content
+        })
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.error || "Publishing failed."
+      );
+    }
+
+    status.textContent =
+      "Success! Your post has been published.";
+
+    document.getElementById("title").value = "";
+    fileInput.value = "";
+    document.getElementById("content").value = "";
+
+  } catch (error) {
+    status.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+  }
+  
     
     async function savePlayer() {
       const status = document.getElementById("playerStatus");
