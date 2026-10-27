@@ -207,8 +207,8 @@ document.querySelectorAll("[data-filter]").forEach(button => {
     mediaItems = data
   .filter(item =>
     item &&
-    (item.type === "photo" || item.type === "video") &&
-    item.url
+    ["photo", "video", "news"].includes(item.type) &&
+    (item.type === "news" || item.url)
   )
   .filter(item =>
     !item.url.toLowerCase().includes("/samples/") &&
