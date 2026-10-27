@@ -154,12 +154,27 @@ form{display:grid;gap:14px;max-width:650px}label{font-size:13px;color:#ddd;displ
       heading.style.color = "#b7ff00";
       card.appendChild(heading);
 
-      if (item.type === "news" && item.content) {
+  if (item.type === "news" && item.content) {
   const article = document.createElement("p");
   article.textContent = item.content;
   article.style.cssText = "color:#ffffff;line-height:1.7;white-space:pre-line;margin-top:12px;";
+
+  const toggle = document.createElement("button");
+  toggle.textContent = "Read Full Story +";
+  toggle.style.cssText = "background:none;border:none;color:#b7ff00;font-weight:bold;font-size:16px;padding:10px 0;cursor:pointer;";
+
+  article.style.display = "none";
+
+  toggle.addEventListener("click", function () {
+    const isHidden = article.style.display === "none";
+    article.style.display = isHidden ? "block" : "none";
+    toggle.textContent = isHidden ? "Show Less −" : "Read Full Story +";
+  });
+
+  card.appendChild(toggle);
   card.appendChild(article);
-      }
+}
+      
       
       gallery.appendChild(card);
     });
