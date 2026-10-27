@@ -166,11 +166,26 @@ if (item.url) {
             article.appendChild(date);
           }
 
-          if (item.content) {
-            const paragraph = document.createElement("p");
-            paragraph.textContent = item.content;
-            article.appendChild(paragraph);
-          }
+  if (item.content) {
+  const paragraph = document.createElement("p");
+  paragraph.textContent = item.content;
+  paragraph.style.cssText = "color:#ffffff;line-height:1.7;white-space:pre-line;margin-top:12px;";
+  paragraph.style.display = "none";
+
+  const toggle = document.createElement("button");
+  toggle.textContent = "Read Full Story +";
+  toggle.style.cssText = "background:none;border:none;color:#b7ff00;font-weight:bold;font-size:16px;padding:10px 0;cursor:pointer;";
+
+  toggle.addEventListener("click", function () {
+    const isHidden = paragraph.style.display === "none";
+    paragraph.style.display = isHidden ? "block" : "none";
+    toggle.textContent = isHidden ? "Show Less −" : "Read Full Story +";
+  });
+
+  article.appendChild(toggle);
+  article.appendChild(paragraph);
+}
+          
 
           list.appendChild(article);
         });
