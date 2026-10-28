@@ -158,5 +158,15 @@
     "goals": 0,
     "assists": 2,
     "appearances": 5
+  },
+  {
+    "name": "Godwin Jude",
+    "number": "9",
+    "position": "Forward",
+    "age_group": "U15",
+    "photo": "https://res.cloudinary.com/atizh0zv/image/upload/v1793223365/file_000000005e648208ac450b7031883565.png",
+    "goals": 0,
+    "assists": 0,
+    "appearances": 0
   }
 ]
